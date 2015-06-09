@@ -6,7 +6,7 @@
     
     Author: Jason Jersey
     Author URI: https://www.twitter.com.com/degersey
-    Version: 1.0
+    Version: 1.0.1
     Text Domain: wpmu_invite_code
     Domain Path: /languages/
     License: GNU General Public License 2.0 
@@ -35,14 +35,14 @@
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-global $wpmu_invite_code_settings_page, $wpmu_invite_code_settings_page_long;
+global $wpmu_ic_settings_page, $wpmu_ic_settings_page_xtra;
 
 if ( version_compare($wp_version, '3.0.9', '>') ) {
-	$wpmu_invite_code_settings_page = 'settings.php';
-	$wpmu_invite_code_settings_page_long = 'network/settings.php';
+	$wpmu_ic_settings_page = 'settings.php';
+	$wpmu_ic_settings_page_long = 'network/settings.php';
 } else {
-	$wpmu_invite_code_settings_page = 'ms-admin.php';
-	$wpmu_invite_code_settings_page_long = 'ms-admin.php';
+	$wpmu_ic_settings_page = 'ms-admin.php';
+	$wpmu_ic_settings_page_long = 'ms-admin.php';
 }
 
 add_action('init', 'wpmu_invite_code_init');
@@ -62,14 +62,14 @@ function wpmu_invite_code_init() {
 }
 
 function wpmu_invite_code_plug_pages() {
-	global $wpdb, $wp_roles, $current_user, $wp_version, $wpmu_invite_code_settings_page, $wpmu_invite_code_settings_page_long;
+	global $wpdb, $wp_roles, $current_user, $wp_version, $wpmu_ic_settings_page, $wpmu_ic_settings_page_long;
 	if ( version_compare($wp_version, '3.0.9', '>') ) {
 	    if ( is_network_admin() ) {
-		add_submenu_page($wpmu_invite_code_settings_page, __('Invite Code', 'wpmu_invite_code'), __('Invite Code', 'wpmu_invite_code'), 'manage_network_options', 'wpmu_invite_code', 'wpmu_invite_code_site_admin_options');
+		add_submenu_page($wpmu_ic_settings_page, __('Invite Code', 'wpmu_invite_code'), __('Invite Code', 'wpmu_invite_code'), 'manage_network_options', 'wpmu_invite_code', 'wpmu_invite_code_site_admin_options');
 	    }
 	} else {
 	    if ( is_super_admin() ) {
-		add_submenu_page($wpmu_invite_code_settings_page, __('Invite Code', 'wpmu_invite_code'), __('Invite Code', 'wpmu_invite_code'), 'manage_network_options', 'wpmu_invite_code', 'wpmu_invite_code_site_admin_options');
+		add_submenu_page($wpmu_ic_settings_page, __('Invite Code', 'wpmu_invite_code'), __('Invite Code', 'wpmu_invite_code'), 'manage_network_options', 'wpmu_invite_code', 'wpmu_invite_code_site_admin_options');
 	    }
 	}
 }
@@ -83,10 +83,10 @@ function wpmu_invite_code_stylesheet() {
 }
 
 function wpmu_invite_code_site_admin_options() {
-	global $wpdb, $wp_roles, $current_user, $wpmu_invite_code_settings_page;
+	global $wpdb, $wp_roles, $current_user, $wpmu_ic_settings_page;
 
 	if(!current_user_can('manage_options')) {
-		echo "<p>" . __('Nice Try...', 'wpmu_invite_code') . "</p>";  //If accessed properly, this message doesn't appear.
+		echo "<p>" . __('Uh Oh!', 'wpmu_invite_code') . "</p>";  /* If accessed properly, this message doesn't appear. */
 		return;
 	}
 	if (isset($_GET['updated'])) {
@@ -97,17 +97,17 @@ function wpmu_invite_code_site_admin_options() {
 		default:
 	?>
 	<h2><?php _e('Invite Code', 'wpmu_invite_code') ?></h2>
-	<form method="post" action="<?php print $wpmu_invite_code_settings_page; ?>?page=wpmu_invite_code&action=process">
+	<form method="post" action="<?php print $wpmu_ic_settings_page; ?>?page=wpmu_invite_code&action=process">
 	<table class="form-table">
 		<tr valign="top">
 			<th scope="row"><?php _e('Code', 'wpmu_invite_code') ?></th>
 			<td><input name="wpmu_invite_code" type="text" id="wpmu_invite_code" value="<?php echo get_site_option('wpmu_invite_code'); ?>" style="width: 95%"/>
 				<br />
-				<?php _e('Users must enter this code in order to signup. Letters and numbers only.', 'wpmu_invite_code') ?>
+				<?php _e('Users must enter this code to signup. Letters and numbers only.', 'wpmu_invite_code') ?>
 			</td>
 		</tr>
 		<tr valign="top">
-			<th scope="row"><?php _e('Invite Code Branding', 'wpmu_invite_code') ?></th>
+			<th scope="row"><?php _e('Label', 'wpmu_invite_code') ?></th>
 			<td><input name="wpmu_invite_code_branding" type="text" id="wpmu_invite_code_branding" value="<?php echo get_site_option('wpmu_invite_code_branding', 'Invite Code'); ?>" style="width: 95%"/>
 				<br />
 				<?php _e('The text label that is displayed on the signup form. ie: Invite Code', 'wpmu_invite_code') ?>
@@ -127,7 +127,7 @@ function wpmu_invite_code_site_admin_options() {
 				update_site_option( 'wpmu_invite_code_branding', "");
 				echo "
 				<script type='text/javascript'>
-				window.location='{$wpmu_invite_code_settings_page}?page=wpmu_invite_code&updated=true&updatedmsg=" . urlencode(__('Changes saved.', 'wpmu_invite_code')) . "';
+				window.location='{$wpmu_ic_settings_page}?page=wpmu_invite_code&updated=true&updatedmsg=" . urlencode(__('Changes saved.', 'wpmu_invite_code')) . "';
 				</script>
 				";
 			} else {
@@ -135,7 +135,7 @@ function wpmu_invite_code_site_admin_options() {
 				update_site_option( 'wpmu_invite_code_branding', stripslashes($_POST['wpmu_invite_code_branding']) );
 				echo "
 				<script type='text/javascript'>
-				window.location='{$wpmu_invite_code_settings_page}?page=wpmu_invite_code&updated=true&updatedmsg=" . urlencode(__('Changes saved.', 'wpmu_invite_code')) . "';
+				window.location='{$wpmu_ic_settings_page}?page=wpmu_invite_code&updated=true&updatedmsg=" . urlencode(__('Changes saved.', 'wpmu_invite_code')) . "';
 				</script>
 				";
 			}
@@ -153,7 +153,7 @@ function wpmu_invite_code_field_wpmu($errors) {
 	$wpmu_invite_code = get_site_option('wpmu_invite_code');
 	if ( !empty( $wpmu_invite_code ) ) {
 	?>
-	<label for="password"><?php _e(get_site_option('wpmu_invite_code_branding', 'Signup Code'), 'wpmu_invite_code'); ?>:</label>
+	<label for="password"><?php _e(get_site_option('wpmu_invite_code_branding', 'Invite Code'), 'wpmu_invite_code'); ?>:</label>
 	<?php
         if($error) {
 		echo '<p class="error">' . $error . '</p>';
