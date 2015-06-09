@@ -6,7 +6,7 @@
     
     Author: Jason Jersey
     Author URI: https://www.twitter.com.com/degersey
-    Version: 1.0.2
+    Version: 1.0.3
     Text Domain: wpmu_invite_code
     License: GNU General Public License 2.0 
     License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -37,7 +37,7 @@ if ( ! defined( 'ABSPATH' ) ) die();
 /* Global variables
  * Since 1.0
  */
-global $wpmu_ic_settings_page, $wpmu_ic_settings_page_xtra;
+global $wpmu_ic_settings_page, $wpmu_ic_settings_page_long;
 
 /* Version check
  * Since 1.0
@@ -55,9 +55,9 @@ if ( version_compare($wp_version, '3.0.9', '>') ) {
  */
 /* Checks if is WPMS */
 add_action('init', 'wpmu_invite_code_init');
-/* Add network admin menus */
+/* Add network admin menus 3.0.9 and before */
 add_action('admin_menu', 'wpmu_invite_code_plug_pages');
-/* Add network admin menus */
+/* Add network admin menus 3.0.9 and after */
 add_action('network_admin_menu', 'wpmu_invite_code_plug_pages');
 /* Add normal frontend invite code field and label */
 add_action('signup_extra_fields', 'wpmu_invite_code_field_wpmu');
@@ -107,7 +107,7 @@ function wpmu_invite_code_plug_pages() {
 function wpmu_invite_code_stylesheet() {
 ?>
 <style type="text/css">
-	.mu_register #wpmu_invite_code { width:100%; font-size: 24px; margin:5px 0; }
+    .mu_register #wpmu_invite_code { width:100%; font-size: 24px; margin:5px 0; }
 </style>
 <?php
 }
