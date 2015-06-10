@@ -6,7 +6,7 @@
     
     Author: Jason Jersey
     Author URI: https://www.twitter.com.com/degersey
-    Version: 1.0.5
+    Version: 1.0.6
     Text Domain: wpmu_invite_code
     License: GNU General Public License 2.0 
     License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -45,24 +45,24 @@ $wpmu_ic_settings_page_long = 'network/settings.php';
  * Since 1.0
  */
 /* Checks if is WPMS */
-add_action('init', 'wpmu_invite_code_init');
+add_action('init', 'wpmu_ic_init');
 /* Add network admin menu */
 add_action('network_admin_menu', 'wpmu_ic_network_admin_menu');
 /* Add normal frontend invite code field and label */
-add_action('signup_extra_fields', 'wpmu_invite_code_field_wpmu');
+add_action('signup_extra_fields', 'wpmu_ic_field_wpmu');
 /* Add Buddypress frontend invite code field and label */
-add_action('bp_after_account_details_fields', 'wpmu_invite_code_field_bp');
+add_action('bp_after_account_details_fields', 'wpmu_ic_field_bp');
 /* Normal validate invite code */
-add_filter('wpmu_validate_user_signup', 'wpmu_invite_code_filter_wpmu');
+add_filter('wpmu_validate_user_signup', 'wpmu_ic_filter_wpmu');
 /* Buddypress validate invite code */
-add_filter('bp_signup_validate', 'wpmu_invite_code_filter_bp');
+add_filter('bp_signup_validate', 'wpmu_ic_filter_bp');
 /* Frontend invite code css */
-add_action('wp_head', 'wpmu_invite_code_stylesheet');
+add_action('wp_head', 'wpmu_ic_stylesheet');
 
 /* Checks if is WPMS
  * Since 1.0
  */
-function wpmu_invite_code_init() {
+function wpmu_ic_init() {
     if ( !is_multisite() )
         exit( 'The WPMU Invite Code plugin is only compatible with WordPress Multisite 3.5+.' );
 }
@@ -75,7 +75,7 @@ function wpmu_ic_network_admin_menu() {
     global $wpmu_ic_settings_page;
 
     if ( is_super_admin() ) {
-        add_submenu_page($wpmu_ic_settings_page, __('Invite Code', 'wpmu_invite_code'), __('Invite Code', 'wpmu_invite_code'), 'manage_network_options', 'wpmu_invite_code', 'wpmu_invite_code_site_admin_options');
+        add_submenu_page($wpmu_ic_settings_page, __('Invite Code', 'wpmu_invite_code'), __('Invite Code', 'wpmu_invite_code'), 'manage_network_options', 'wpmu_invite_code', 'wpmu_ic_options');
     }
 
 }
@@ -83,7 +83,7 @@ function wpmu_ic_network_admin_menu() {
 /* Frontend invite code css
  * Since 1.0
  */
-function wpmu_invite_code_stylesheet() {
+function wpmu_ic_stylesheet() {
 ?>
 <style type="text/css">
     .mu_register #wpmu_invite_code { width:100%; font-size: 24px; margin:5px 0; }
@@ -94,7 +94,7 @@ function wpmu_invite_code_stylesheet() {
 /* Network admin settings page
  * Since 1.0
  */
-function wpmu_invite_code_site_admin_options() {
+function wpmu_ic_options() {
 	
 	global $wpmu_ic_settings_page;
 
@@ -162,7 +162,7 @@ function wpmu_invite_code_site_admin_options() {
 /* Add normal frontend invite code field and label
  * Since 1.0
  */
-function wpmu_invite_code_field_wpmu($errors) {
+function wpmu_ic_field_wpmu($errors) {
 
 	if (!empty($errors)) {
 		$error = $errors->get_error_message('wpmu_invite_code');
@@ -191,7 +191,7 @@ function wpmu_invite_code_field_wpmu($errors) {
 /* Add Buddypress frontend invite code field and label
  * Since 1.0
  */
-function wpmu_invite_code_field_bp() {
+function wpmu_ic_field_bp() {
 
     $wpmu_invite_code = get_site_option('wpmu_invite_code');
     if ( !empty( $wpmu_invite_code ) ) {
@@ -211,7 +211,7 @@ function wpmu_invite_code_field_bp() {
 /* Normal validate invite code
  * Since 1.0
  */
-function wpmu_invite_code_filter_wpmu($content) {
+function wpmu_ic_filter_wpmu($content) {
 
     $wpmu_invite_code = get_site_option('wpmu_invite_code');
     if ( !empty( $wpmu_invite_code ) ) {
@@ -226,7 +226,7 @@ function wpmu_invite_code_filter_wpmu($content) {
 /* Buddypress validate invite code
  * Since 1.0
  */
-function wpmu_invite_code_filter_bp() {
+function wpmu_ic_filter_bp() {
 
     global $bp;
     $wpmu_invite_code = get_site_option('wpmu_invite_code');
