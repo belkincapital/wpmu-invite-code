@@ -182,7 +182,8 @@ function wpmu_ic_field_wpmu($errors) {
         }
         
 	?>
-	<input type="text" name="wpmu_invite_code" id="wpmu_invite_code" value="<?php echo $_GET['code']; ?>" />
+	<input type="text" name="wpmu_invite_code" id="wpmu_invite_code" value="<?php echo $_GET['code']; ?>" /><br />
+	(Users must enter this code to signup. Letters and numbers only.)
 	<?php
 	}
 
