@@ -197,13 +197,14 @@ function wpmu_ic_field_bp() {
     $wpmu_invite_code = get_site_option('wpmu_invite_code');
     if ( !empty( $wpmu_invite_code ) ) {
 
-?>
+    ?>
     <div class="register-section" id="blog-details-section">
     <label for="invite-code"><?php _e(get_site_option('wpmu_invite_code_branding', 'Invite Code'), 'wpmu_invite_code'); ?>:</label>
-		<?php do_action( 'bp_wpmu_invite_code_errors' ) ?>
-		<input type="text" name="wpmu_invite_code" id="wpmu_invite_code" value="<?php echo $_GET['code']; ?>" />
+        <?php do_action( 'bp_wpmu_invite_code_errors' ) ?>
+        <input type="text" name="wpmu_invite_code" id="wpmu_invite_code" value="<?php echo $_GET['code']; ?>" /><br />
+	(Users must enter this code to signup. Letters and numbers only.)
     </div>
-<?php
+    <?php
 
     }
 
