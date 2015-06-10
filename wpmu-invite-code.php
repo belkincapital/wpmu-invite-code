@@ -183,7 +183,7 @@ function wpmu_ic_field_wpmu($errors) {
         
 	?>
 	<input type="text" name="wpmu_invite_code" id="wpmu_invite_code" value="<?php echo $_GET['code']; ?>" /><br />
-	(You must enter a code to signup. Letters and numbers only.)
+	You must enter a code to signup. (Letters and numbers only.)
 	<?php
 	}
 
@@ -202,7 +202,7 @@ function wpmu_ic_field_bp() {
     <label for="invite-code"><?php _e(get_site_option('wpmu_invite_code_branding', 'Invite Code'), 'wpmu_invite_code'); ?>:</label>
         <?php do_action( 'bp_wpmu_invite_code_errors' ) ?>
         <input type="text" name="wpmu_invite_code" id="wpmu_invite_code" value="<?php echo $_GET['code']; ?>" /><br />
-	(You must enter a code to signup. Letters and numbers only.)
+	You must enter a code to signup. (Letters and numbers only.)
     </div>
     <?php
 
