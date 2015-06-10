@@ -6,7 +6,7 @@
     
     Author: Jason Jersey
     Author URI: https://www.twitter.com.com/degersey
-    Version: 1.0.6
+    Version: 1.0.7
     Text Domain: wpmu_invite_code
     License: GNU General Public License 2.0 
     License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -86,7 +86,7 @@ function wpmu_ic_network_admin_menu() {
 function wpmu_ic_stylesheet() {
 ?>
 <style type="text/css">
-    .mu_register #wpmu_invite_code { width:100%; font-size: 24px; margin:5px 0; }
+    .mu_register #wpmu_invite_code { width:50%; margin:5px 0; }
 </style>
 <?php
 }
