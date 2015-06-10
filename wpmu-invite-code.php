@@ -2,11 +2,11 @@
 /*
     Plugin Name: WPMU Invite Code
     Plugin URI: https://github.com/belkincapital/wpmu-invite-code
-    Description: Add invite code to wp-signup.php on WordPress Multisite and require a code for users to signup. Plugin is only compatible with WordPress Multisite.
+    Description: Add invite code to wp-signup.php on WordPress Multisite and require a code for users to signup. Plugin is only compatible with WordPress Multisite 3.5+.
     
     Author: Jason Jersey
     Author URI: https://www.twitter.com.com/degersey
-    Version: 1.0.3
+    Version: 1.0.5
     Text Domain: wpmu_invite_code
     License: GNU General Public License 2.0 
     License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -32,33 +32,22 @@
 /* Exit if accessed directly
  * Since 1.0
  */
-if ( ! defined( 'ABSPATH' ) ) die();
+if ( ! defined( 'ABSPATH' ) ) die('Uh Oh!');
 
 /* Global variables
  * Since 1.0
  */
 global $wpmu_ic_settings_page, $wpmu_ic_settings_page_long;
-
-/* Version check
- * Since 1.0
- */
-if ( version_compare($wp_version, '3.0.9', '>') ) {
-	$wpmu_ic_settings_page = 'settings.php';
-	$wpmu_ic_settings_page_long = 'network/settings.php';
-} else {
-	$wpmu_ic_settings_page = 'ms-admin.php';
-	$wpmu_ic_settings_page_long = 'ms-admin.php';
-}
+$wpmu_ic_settings_page = 'settings.php';
+$wpmu_ic_settings_page_long = 'network/settings.php';	
 
 /* Add hooks and filters
  * Since 1.0
  */
 /* Checks if is WPMS */
 add_action('init', 'wpmu_invite_code_init');
-/* Add network admin menus 3.0.9 and before */
-add_action('admin_menu', 'wpmu_invite_code_plug_pages');
-/* Add network admin menus 3.0.9 and after */
-add_action('network_admin_menu', 'wpmu_invite_code_plug_pages');
+/* Add network admin menu */
+add_action('network_admin_menu', 'wpmu_ic_network_admin_menu');
 /* Add normal frontend invite code field and label */
 add_action('signup_extra_fields', 'wpmu_invite_code_field_wpmu');
 /* Add Buddypress frontend invite code field and label */
@@ -75,28 +64,18 @@ add_action('wp_head', 'wpmu_invite_code_stylesheet');
  */
 function wpmu_invite_code_init() {
     if ( !is_multisite() )
-        exit( 'The WPMU Invite Code plugin is only compatible with WordPress Multisite.' );
+        exit( 'The WPMU Invite Code plugin is only compatible with WordPress Multisite 3.5+.' );
 }
 
 /* Add network admin menus
  * Since 1.0
  */
-function wpmu_invite_code_plug_pages() {
-    
-    global $wpdb, $wp_roles, $current_user, $wp_version, $wpmu_ic_settings_page, $wpmu_ic_settings_page_long;
-    
-    if ( version_compare($wp_version, '3.0.9', '>') ) {
+function wpmu_ic_network_admin_menu() {
 
-        if ( is_network_admin() ) {
-            add_submenu_page($wpmu_ic_settings_page, __('Invite Code', 'wpmu_invite_code'), __('Invite Code', 'wpmu_invite_code'), 'manage_network_options', 'wpmu_invite_code', 'wpmu_invite_code_site_admin_options');
-        }
+    global $wpmu_ic_settings_page;
 
-    } else {
-
-        if ( is_super_admin() ) {
-            add_submenu_page($wpmu_ic_settings_page, __('Invite Code', 'wpmu_invite_code'), __('Invite Code', 'wpmu_invite_code'), 'manage_network_options', 'wpmu_invite_code', 'wpmu_invite_code_site_admin_options');
-        }
-
+    if ( is_super_admin() ) {
+        add_submenu_page($wpmu_ic_settings_page, __('Invite Code', 'wpmu_invite_code'), __('Invite Code', 'wpmu_invite_code'), 'manage_network_options', 'wpmu_invite_code', 'wpmu_invite_code_site_admin_options');
     }
 
 }
@@ -117,9 +96,9 @@ function wpmu_invite_code_stylesheet() {
  */
 function wpmu_invite_code_site_admin_options() {
 	
-	global $wpdb, $wp_roles, $current_user, $wpmu_ic_settings_page;
+	global $wpmu_ic_settings_page;
 
-	if(!current_user_can('manage_options')) {
+	if( !current_user_can('manage_network_options') ) {
 		echo "<p>" . __('Uh Oh!', 'wpmu_invite_code') . "</p>";  /* If accessed properly, this message doesn't appear. */
 		return;
 	}
@@ -184,64 +163,78 @@ function wpmu_invite_code_site_admin_options() {
  * Since 1.0
  */
 function wpmu_invite_code_field_wpmu($errors) {
+
 	if (!empty($errors)) {
 		$error = $errors->get_error_message('wpmu_invite_code');
 	} else {
 		$error = false;
 	}
+	
 	$wpmu_invite_code = get_site_option('wpmu_invite_code');
 	if ( !empty( $wpmu_invite_code ) ) {
+	
 	?>
-	<label for="password"><?php _e(get_site_option('wpmu_invite_code_branding', 'Invite Code'), 'wpmu_invite_code'); ?>:</label>
+	<label for="invite-code"><?php _e(get_site_option('wpmu_invite_code_branding', 'Invite Code'), 'wpmu_invite_code'); ?>:</label>
 	<?php
+	
         if($error) {
 		echo '<p class="error">' . $error . '</p>';
         }
+        
 	?>
 	<input type="text" name="wpmu_invite_code" id="wpmu_invite_code" value="<?php echo $_GET['code']; ?>" />
 	<?php
 	}
+
 }
 
 /* Add Buddypress frontend invite code field and label
  * Since 1.0
  */
 function wpmu_invite_code_field_bp() {
-	$wpmu_invite_code = get_site_option('wpmu_invite_code');
-	if ( !empty( $wpmu_invite_code ) ) {
-	?>
+
+    $wpmu_invite_code = get_site_option('wpmu_invite_code');
+    if ( !empty( $wpmu_invite_code ) ) {
+
+?>
     <div class="register-section" id="blog-details-section">
-    <label for="password"><?php _e(get_site_option('wpmu_invite_code_branding', 'Invite Code'), 'wpmu_invite_code'); ?>:</label>
+    <label for="invite-code"><?php _e(get_site_option('wpmu_invite_code_branding', 'Invite Code'), 'wpmu_invite_code'); ?>:</label>
 		<?php do_action( 'bp_wpmu_invite_code_errors' ) ?>
 		<input type="text" name="wpmu_invite_code" id="wpmu_invite_code" value="<?php echo $_GET['code']; ?>" />
     </div>
-	<?php
-	}
+<?php
+
+    }
+
 }
 
 /* Normal validate invite code
  * Since 1.0
  */
 function wpmu_invite_code_filter_wpmu($content) {
-	$wpmu_invite_code = get_site_option('wpmu_invite_code');
-	if ( !empty( $wpmu_invite_code ) ) {
-		if($wpmu_invite_code != $_POST['wpmu_invite_code'] && $_POST['stage'] == 'validate-user-signup') {
-			$content['errors']->add('wpmu_invite_code', __('Invalid ' . strtolower(get_site_option('wpmu_invite_code_branding', 'Invite Code')) . '.', 'wpmu_invite_code'));
-		}
-	}
-	return $content;
+
+    $wpmu_invite_code = get_site_option('wpmu_invite_code');
+    if ( !empty( $wpmu_invite_code ) ) {
+        if($wpmu_invite_code != $_POST['wpmu_invite_code'] && $_POST['stage'] == 'validate-user-signup') {
+            $content['errors']->add('wpmu_invite_code', __('Invalid ' . strtolower(get_site_option('wpmu_invite_code_branding', 'Invite Code')) . '.', 'wpmu_invite_code'));
+        }
+    }
+    return $content;
+
 }
 
 /* Buddypress validate invite code
  * Since 1.0
  */
 function wpmu_invite_code_filter_bp() {
-	global $bp;
-	$wpmu_invite_code = get_site_option('wpmu_invite_code');
-	if ( !empty( $wpmu_invite_code ) ) {
-		if($wpmu_invite_code != $_POST['wpmu_invite_code'] && isset($_POST['signup_username'])) {
-			$bp->signup->errors['wpmu_invite_code'] = __('Invalid ' . strtolower(get_site_option('wpmu_invite_code_branding', 'Invite Code')) . '.', 'wpmu_invite_code');
-		}
-	}
-	return $content;
+
+    global $bp;
+    $wpmu_invite_code = get_site_option('wpmu_invite_code');
+    if ( !empty( $wpmu_invite_code ) ) {
+        if($wpmu_invite_code != $_POST['wpmu_invite_code'] && isset($_POST['signup_username'])) {
+            $bp->signup->errors['wpmu_invite_code'] = __('Invalid ' . strtolower(get_site_option('wpmu_invite_code_branding', 'Invite Code')) . '.', 'wpmu_invite_code');
+        }
+     }
+     return $content;
+
 }
